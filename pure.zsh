@@ -146,6 +146,8 @@ prompt_pure_preprompt_render() {
 	preprompt+=$prompt_pure_username
 	# execution time
 	preprompt+="%F{yellow}${prompt_pure_cmd_exec_time}%f"
+	# soji header
+	preprompt+="${prompt_pure_soji_header}"
 
 	# make sure prompt_pure_last_preprompt is a global array
 	typeset -g -a prompt_pure_last_preprompt
@@ -259,6 +261,10 @@ prompt_pure_async_git_fetch() {
 	GIT_TERMINAL_PROMPT=0 command git -c gc.auto=0 fetch
 }
 
+prompt_pure_async_soji_header() {
+	echo "$(soji header)"
+}
+
 prompt_pure_async_tasks() {
 	# initialize async worker
 	((!${prompt_pure_async_init:-0})) && {
@@ -299,6 +305,9 @@ prompt_pure_async_tasks() {
 		# check check if there is anything to pull
 		async_job "prompt_pure" prompt_pure_async_git_dirty "${PURE_GIT_UNTRACKED_DIRTY:-1}" "${working_tree}"
 	fi
+
+	# get soji header line
+	async_job "prompt_pure" prompt_pure_async_soji_header
 }
 
 prompt_pure_async_callback() {
@@ -320,6 +329,8 @@ prompt_pure_async_callback() {
 			prompt_pure_check_git_arrows
 			prompt_pure_preprompt_render
 			;;
+		prompt_pure_async_soji_header)
+			prompt_pure_soji_header=$output
 	esac
 }
 
