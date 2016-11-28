@@ -289,7 +289,10 @@ prompt_pure_async_tasks() {
 		prompt_pure_current_working_tree="x${working_tree}"
 	fi
 
-	# only perform tasks inside git working tree
+	# get soji header line
+	async_job "prompt_pure" prompt_pure_async_soji_header
+
+	# only perform git tasks inside git working tree
 	[[ -n $working_tree ]] || return
 
 	# do not preform git fetch if it is disabled or working_tree == HOME
@@ -305,9 +308,6 @@ prompt_pure_async_tasks() {
 		# check check if there is anything to pull
 		async_job "prompt_pure" prompt_pure_async_git_dirty "${PURE_GIT_UNTRACKED_DIRTY:-1}" "${working_tree}"
 	fi
-
-	# get soji header line
-	async_job "prompt_pure" prompt_pure_async_soji_header
 }
 
 prompt_pure_async_callback() {
@@ -331,6 +331,7 @@ prompt_pure_async_callback() {
 			;;
 		prompt_pure_async_soji_header)
 			prompt_pure_soji_header=$output
+			;;
 	esac
 }
 
